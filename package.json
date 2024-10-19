@@ -4,8 +4,8 @@
   "description": "Simple crud api",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "npx nodemon src/index.ts",
-    "prod": "tsc && node dist/index.js",
+    "start:dev": "npx nodemon src/index.ts",
+    "start:prod": "tsc && node dist/index.js",
     "test": "jest"
   },
   "repository": {
