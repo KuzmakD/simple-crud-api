@@ -1,7 +1,6 @@
+import { usersDB as users } from '../db/users';
 import { IUser } from '../types/interface';
-import { v4 as uuidv4 } from 'uuid';
-
-let users = new Array<IUser>;
+import { v4 as uuid } from 'uuid';
 
 const getUsers = (): Array<IUser> => {
   console.log('getUsers: ', users);
@@ -14,7 +13,7 @@ const getUserById = (id: string): IUser | undefined => {
 
 const createUser = (user: IUser): IUser => {
   const newUser = {
-    id: uuidv4(),
+    id: uuid(),
     ...user,
   }
   users.push(newUser);
@@ -42,7 +41,6 @@ const deleteUser = (id: string): IUser | undefined => {
     return undefined;
   }
 };
-
 
 export default {
   getUsers,
