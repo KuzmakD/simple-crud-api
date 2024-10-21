@@ -1,12 +1,11 @@
 export const errorMessages = {
-  notFound: "Not found",
-  invalidUserId: "Invalid user ID",
-  invalidUserData: "Invalid users data",
-  userNotFound: "User not found",
-  invalidRequestBody: "Invalid request body. Please check the JSON format and required fields.",
-  invalidBody: "Invalid JSON format in request body",
+  invalidUserId: 'Invalid User ID. Please input a valid User ID.',
+  invalidUserData: 'Invalid Users data',
+  userNotFound: 'User with this id not exists.',
+  invalidRequestBody: 'Invalid request body. Please check the JSON format and required fields.',
   internalServerError: "Internal Server Error. Please try again later",
-  methodNotAllowed: "Method Not Allowed",
+  invalidURL: 'Invalid URL. Please input correct URL.',
+  methodNotAllowed: 'Method Not Allowed',
 };
 
 export const enum statusCode {
