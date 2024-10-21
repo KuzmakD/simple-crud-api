@@ -3,7 +3,6 @@ import { IUser } from '../types/interface';
 import { v4 as uuid } from 'uuid';
 
 const getUsers = (): Array<IUser> => {
-  console.log('getUsers: ', users);
   return users;
 };
 
@@ -26,9 +25,8 @@ const updateUser = (id: string, updatedUser: IUser): IUser | undefined => {
   if (user) {
     Object.assign(user, updatedUser);
     return user;
-  } else {
-    return undefined;
   }
+  return user;
 };
 
 const deleteUser = (id: string): IUser | undefined => {

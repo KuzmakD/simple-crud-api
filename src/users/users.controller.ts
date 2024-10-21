@@ -47,13 +47,13 @@ const createUser = async (req: IncomingMessage, res: ServerResponse) => {
 
         if (isValidUser(username, age, hobbies)) {
           newUser = usersRepository.createUser({username, age, hobbies});
+          res.writeHead(statusCode.created, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(newUser));
         } else {
           res.writeHead(statusCode.badRequest, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ message: errorMessages.invalidUserData }));
         }
 
-        res.writeHead(statusCode.created, { "Content-Type": "application/json" });
-        res.end(JSON.stringify(newUser));
       } catch (err) {
         res.writeHead(statusCode.badRequest, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ message: errorMessages.invalidRequestBody }));
@@ -66,15 +66,54 @@ const createUser = async (req: IncomingMessage, res: ServerResponse) => {
   };
 };
 
+// PUT api/users/{userId} is used to update existing user
 const updateUser = async (req: IncomingMessage, res: ServerResponse, id: string) => {
-  res.writeHead(200);
-  res.end(JSON.stringify({ message: 'Update user info!' }));
-  return res;
+  try {
+    if (!uuid.validate(id)) {
+      res.writeHead(statusCode.badRequest, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: errorMessages.invalidUserId }));
+      return;
+    }
+  
+    const userById = await usersRepository.getUserById(id);
+    let updatedUser: IUser | undefined;
+
+    if (!userById) {
+      res.writeHead(statusCode.notFound, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: errorMessages.userNotFound }));
+      return;
+    }
+    
+    let body = '';
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      try {
+        const { username, age, hobbies, id } = JSON.parse(body);
+  
+        if (isValidUser(username, age, hobbies)) {
+          const newUserData = JSON.parse(body);
+          updatedUser = usersRepository.updateUser(id, newUserData);
+          res.writeHead(statusCode.ok, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(updatedUser));
+        } else {
+          res.writeHead(statusCode.badRequest, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ message: errorMessages.invalidUserData }));
+        }
+      } catch (err) {
+        res.writeHead(statusCode.badRequest, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ message: errorMessages.invalidRequestBody }));
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.writeHead(statusCode.internalServerError);
+    res.end(JSON.stringify({ message: errorMessages.internalServerError }));
+  }
 };
 
 const deleteUser = async (req: IncomingMessage, res: ServerResponse, id: string) => {
-  console.log('Delete user', id);
-
   if (!uuid.validate(id)) {
     res.writeHead(statusCode.badRequest, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: errorMessages.invalidUserId }));
