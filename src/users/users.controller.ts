@@ -31,43 +31,46 @@ const getUserById = async (req: IncomingMessage, res: ServerResponse, id: string
       userId: id,
     }));
   }
-}
+};
 
 const createUser = async (req: IncomingMessage, res: ServerResponse) => {
-  let body = '';
-  let newUser: IUser;
-  
   try {
+    let body = '';
+    let newUser: IUser;
 
     req.on('data', chunk => {
       body += chunk.toString();
     });
     req.on('end', () => {
-      const { username, age, hobbies } = JSON.parse(body);
+      try {
+        const { username, age, hobbies } = JSON.parse(body);
 
-      if (isValidUser(username, age, hobbies)) {
-        newUser = usersRepository.createUser({username, age, hobbies});
-      } else {
+        if (isValidUser(username, age, hobbies)) {
+          newUser = usersRepository.createUser({username, age, hobbies});
+        } else {
+          res.writeHead(statusCode.badRequest, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ message: errorMessages.invalidUserData }));
+        }
+
+        res.writeHead(statusCode.created, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(newUser));
+      } catch (err) {
         res.writeHead(statusCode.badRequest, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ message: errorMessages.invalidUserData }));
+        res.end(JSON.stringify({ message: errorMessages.invalidRequestBody }));
       }
-      res.writeHead(statusCode.created, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(newUser));
     });
   } catch (err) {
     console.error(err);
     res.writeHead(statusCode.internalServerError);
-    res.end(JSON.stringify({ message: 'Error creating user!' }));
-  }
-  
-  return res;
-}
+    res.end(JSON.stringify({ message: errorMessages.internalServerError }));
+  };
+};
 
 const updateUser = async (req: IncomingMessage, res: ServerResponse, id: string) => {
   res.writeHead(200);
   res.end(JSON.stringify({ message: 'Update user info!' }));
   return res;
-}
+};
 
 const deleteUser = async (req: IncomingMessage, res: ServerResponse, id: string) => {
   console.log('Delete user', id);
@@ -89,7 +92,7 @@ const deleteUser = async (req: IncomingMessage, res: ServerResponse, id: string)
     res.writeHead(statusCode.notFound, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: errorMessages.userNotFound }));
   }
-}
+};
 
 export default {
   getUsers,
