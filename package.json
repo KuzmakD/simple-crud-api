@@ -1,23 +1,13 @@
 {
   "name": "simple-crud-api",
   "version": "1.0.0",
-  "description": "Simple crud api",
+  "description": "Simple crud api", 
   "main": "src/index.ts",
   "scripts": {
     "start:dev": "npx nodemon src/index.ts",
     "start:prod": "tsc && node dist/src/index.js",
     "start:multi": "npx nodemon src/index.ts -- --mode=cluster",
     "test": "jest"
-  },
-  "jest": {
-    "verbose": true,
-    "silent": true,
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "rootDir": "./test/",
-    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
